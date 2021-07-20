@@ -3,7 +3,8 @@ import jwtDecode from 'jwt-decode';
 import { User } from 'src/models/user';
 import SuspenseLoader from 'src/components/SuspenseLoader';
 import axios from 'src/utils/axios';
-
+import { HttpService, userService } from 'src/services';
+import jwt from 'jsonwebtoken';
 interface AuthState {
   isInitialised: boolean;
   isAuthenticated: boolean;
@@ -138,6 +139,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     const { accessToken, user } = response.data;
 
     setSession(accessToken);
+    HttpService.setToken(accessToken);
     dispatch({
       type: 'LOGIN',
       payload: {
@@ -176,22 +178,33 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     const initialise = async () => {
       try {
         const accessToken = window.localStorage.getItem('accessToken');
-
+        
         if (accessToken && isValidToken(accessToken)) {
-          setSession(accessToken);
-
-          const response = await axios.get<{ user: User }>(
-            '/api/account/personal'
-          );
-          const { user } = response.data;
-
-          dispatch({
-            type: 'INITIALISE',
-            payload: {
-              isAuthenticated: true,
-              user
-            }
-          });
+          const { email, sub } = jwt.verify(accessToken, 'secretKey') as any;
+            setSession(accessToken);
+            HttpService.setToken(accessToken);  
+            console.log('---line186----', accessToken, email, sub);
+            await userService.user(sub).then(({data})=>{
+                console.log('+++++', data);
+                let user = data.data;
+                console.log('---line 190---',user);  
+                dispatch({
+                  type: 'INITIALISE',
+                  payload: {
+                    isAuthenticated: true,
+                    user
+                  }
+                });
+            },({response})=>{
+                console.log('+++199+++++', response);
+                dispatch({
+                  type: 'INITIALISE',
+                  payload: {
+                    isAuthenticated: false,
+                    user: null
+                  }
+                });
+            })
         } else {
           dispatch({
             type: 'INITIALISE',

@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { HTMLProps, ReactNode } from 'react';
-import { Helmet } from 'react-helmet';
+// import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
 
 interface ContentWrapperProps extends HTMLProps<HTMLDivElement> {
@@ -12,9 +12,9 @@ const ContentWrapper = forwardRef<HTMLDivElement, ContentWrapperProps>(
   ({ children, title = '', ...rest }, ref) => {
     return (
       <>
-        <Helmet ref={ref as any} {...rest}>
+        {/* <Helmet ref={ref as any} {...rest}>
           <title>{title}</title>
-        </Helmet>
+        </Helmet> */}
         {children}
       </>
     );

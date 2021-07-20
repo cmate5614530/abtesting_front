@@ -71,13 +71,13 @@ const routes: Routes = [
   },
   {
     exact: true,
-    // guard: Guest,
+    guard: Guest,
     path: '/login',
     component: lazy(() => import('src/content/pages/Auth/Login/Basic'))
   },
   {
     exact: true,
-    // guard: Guest,
+    guard: Guest,
     path: '/register',
     component: lazy(() => import('src/content/pages/Auth/Register/Basic'))
   },

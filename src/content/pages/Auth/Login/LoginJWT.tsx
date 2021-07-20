@@ -11,11 +11,13 @@ import {
   Typography,
   Link,
   FormControlLabel,
-  CircularProgress
+  CircularProgress,
+  Divider
 } from '@material-ui/core';
 import useAuth from 'src/hooks/useAuth';
 import useRefMounted from 'src/hooks/useRefMounted';
 import { useTranslation } from 'react-i18next';
+import Label from 'src/components/Label';
 
 function LoginJWT() {
   const { login } = useAuth() as any;
@@ -23,6 +25,20 @@ function LoginJWT() {
   const { t }: { t: any } = useTranslation();
 
   return (
+    <>
+    <Button
+        sx={{ mt: 3 }}
+        color="primary"
+        startIcon={ <img src="/static/images/logo/google.svg" alt="google" /> }
+        type="submit"
+        fullWidth
+        size="large"
+        variant="outlined"
+      >
+        {'Sign in with Google'}
+    </Button>
+    <Divider sx={{mt:4}}/>
+    <label style={{position: 'relative',bottom: '10px',background: 'white',padding: '13px',fontSize: '16px'}}>{'OR'}</label>
     <Formik
       initialValues={{
         email: '',
@@ -148,6 +164,7 @@ function LoginJWT() {
         </form>
       )}
     </Formik>
+    </>
   );
 }
 

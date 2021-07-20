@@ -36,10 +36,7 @@ function Header() {
   return (
     <HeaderWrapper display="flex" alignItems="center">
       <Box display="flex" alignItems="center">
-        <Logo />
-        <Hidden mdDown>
-          <HeaderMenu />
-        </Hidden>
+        
       </Box>
       <Box display="flex" alignItems="center">
         <HeaderButtons />

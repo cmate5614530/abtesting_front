@@ -27,11 +27,11 @@ function Footer() {
         >
           <Box>
             <Typography variant="subtitle1">
-              &copy; 2021 - Tokyo React Admin Dashboard
+              &copy; 2021 - RooJet
             </Typography>
           </Box>
           <Typography sx={{ pt: { xs: 2, md: 0 } }} variant="subtitle1">
-            Crafted by BloomUI.com
+            Developed by BRIGHT
           </Typography>
         </FooterContent>
       </Container>

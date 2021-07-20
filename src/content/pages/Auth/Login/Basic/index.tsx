@@ -6,7 +6,8 @@ import {
   Tooltip,
   Typography,
   Container,
-  Alert
+  Alert,
+  Grid
 } from '@material-ui/core';
 import ContentWrapper from 'src/components/ContentWrapper';
 import useAuth from 'src/hooks/useAuth';
@@ -84,8 +85,14 @@ function LoginBasic() {
       <MainContent>
         <TopWrapper>
           <Container maxWidth="sm">
-            <Logo />
-            <Card sx={{ mt: 9, px: 4, pt: 5, pb: 3 }}>
+            {/* <Logo /> */}
+          
+            <Box display="flex" justifyContent="center" sx={{mt:6}}>
+              <Box bgcolor="#FEFEFE" borderRadius="50%" border="1px solid rgba(34,51,84,0.2)" width="70px" height="70px"  boxSizing="border-box" boxShadow="0px 9px 16px rgba(159, 162, 191, 0.18), 0px 2px 2px rgba(159, 162, 191, 0.32);">
+                <img alt="logo" src="/static/images/logo/logo.png" height="33px" style={{marginTop:'17px'}}/>
+              </Box>
+            </Box>          
+            <Card sx={{ mt: 6, px: 4, pt: 5, pb: 3 }}>
               <Box>
                 <Typography variant="h2" sx={{ mb: 1 }}>
                   {t('Sign in')}

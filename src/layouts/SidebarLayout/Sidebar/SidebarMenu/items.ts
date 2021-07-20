@@ -18,29 +18,90 @@ export interface MenuItems {
 
 const menuItems: MenuItems[] = [
   {
-    heading: 'Menu Heading',
+    heading: '',
     items: [
       {
-        name: 'Example Page',
+        name: 'Overview',
         icon: AnalyticsTwoToneIcon,
-        link: '/preview/dashboards/analytics'
+        link: '/submenu',
+        items:[
+          {
+            name:'Overview1',
+            link:'/'
+          },
+          {
+            name:'Overview2',
+            link:'/'
+          }
+        ]
       },
       {
-        name: 'With Sub-Menu',
+        name: 'Testing',
         icon: HealthAndSafetyTwoToneIcon,
         link: '/submenu',
         items: [
           {
-            name: 'Sub-menu Item 1',
-            badge: 'Hot',
-            link: ''
+            name:'Create a new test',
+            link:'/'
           },
           {
-            name: 'Sub-menu Item 2',
-            link: ''
+            name: 'All Previous Test',
+            badge: '',
+            link: '/preview/dashboards/analytics'
+          },
+          {
+            name: 'Reports',
+            link: '/'
+          },
+          {
+            name: 'Sites',
+            link: '/'
+          },
+          {
+            name: 'Add A Site',
+            link: '/'
+          },
+          {
+            name: 'Add A URL for New Test',
+            link: '/'
           }
         ]
       }
+    ]
+  },
+  {
+    heading:'APPLICATIONS',
+    items:[
+      {
+        name: 'Account',
+        icon: AnalyticsTwoToneIcon,
+        link: '/submenu',
+        items:[
+          {
+            name:'Overview1',
+            link:'/'
+          },
+          {
+            name:'Overview2',
+            link:'/'
+          }
+        ]
+      },
+      {
+        name: 'Dashboards',
+        icon: AnalyticsTwoToneIcon,
+        link: '/submenu',
+        items:[
+          {
+            name:'Overview1',
+            link:'/'
+          },
+          {
+            name:'Overview2',
+            link:'/'
+          }
+        ]
+      },
     ]
   }
 ];

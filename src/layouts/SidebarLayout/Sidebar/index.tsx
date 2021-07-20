@@ -3,8 +3,7 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import { SidebarContext } from 'src/contexts/SidebarContext';
 import { useTranslation } from 'react-i18next';
 
-import { Box, Button, Divider, Drawer, Hidden } from '@material-ui/core';
-
+import { Box, Button, Divider, Drawer, Hidden, Link } from '@material-ui/core';
 import { experimentalStyled } from '@material-ui/core/styles';
 import SidebarMenu from './SidebarMenu';
 
@@ -47,8 +46,10 @@ function Sidebar() {
       <Hidden lgDown>
         <SidebarWrapper>
           <Scrollbars autoHide>
-            <TopSection>
-              SIDEBAR TOP SECTION
+            <TopSection textAlign="center">
+              <Link href="/">
+                <img alt="logo" src="/static/images/logo/image.png" height="42px"/>
+              </Link>
             </TopSection>
             <SidebarDivider sx={{ my: 2, mx: 2 }} />
             <SidebarMenu />
@@ -65,10 +66,10 @@ function Sidebar() {
         >
           <SidebarWrapper>
             <Scrollbars autoHide>
-              <TopSection>
-                <Button variant="contained" fullWidth color="primary">
-                  {t('Buy template')}
-                </Button>
+              <TopSection textAlign="center">
+                <Link href="/">
+                  <img alt="logo" src="/static/images/logo/image.png" height="42px"/>
+                </Link>
               </TopSection>
               <SidebarDivider sx={{ my: 2, mx: 2 }} />
               <SidebarMenu />
