@@ -8,6 +8,9 @@ import SuspenseLoader from 'src/components/SuspenseLoader';
 import Guest from 'src/components/Guest';
 import Authenticated from 'src/components/Authenticated';
 
+import DomainDetailsPage from 'src/content/pages/DomainDetails';
+import NewTest from 'src/content/pages/NewTest';
+import ReportPage from 'src/content/pages/report';
 type Routes = {
   exact?: boolean;
   path?: string | string[];
@@ -50,13 +53,13 @@ export const renderRoutes = (routes: Routes = []): JSX.Element => (
 
 const routes: Routes = [
   {
-    path: '/preview',
+    path: '/dashboard',
     guard: Authenticated,
     layout: SidebarLayout,
     routes: [
       {
         exact: true,
-        path: '/preview/dashboards/analytics',
+        path: '/dashboard/analytics',
         component: lazy(() => import('src/content/dashboards/Analytics'))
       },
       {
@@ -67,7 +70,28 @@ const routes: Routes = [
   {
     exact: true,
     path: '/',
-    component: () => <Redirect to="/preview/dashboards/analytics" />
+    component: () => <Redirect to="/dashboard/analytics" />
+  },
+  {
+    exact: true,
+    guard: Authenticated,
+    layout: SidebarLayout,
+    path: '/domain/details/:id',
+    component: DomainDetailsPage
+  },
+  {
+    exact: true,
+    guard: Authenticated,
+    layout: SidebarLayout,
+    path: '/domain/details/:id/new',
+    component: NewTest
+  },
+  {
+    exact: true,
+    guard: Authenticated,
+    layout: SidebarLayout,
+    path: '/domain/details/:testid/:expid',
+    component: ReportPage
   },
   {
     exact: true,

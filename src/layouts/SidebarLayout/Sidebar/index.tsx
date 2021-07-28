@@ -3,7 +3,7 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import { SidebarContext } from 'src/contexts/SidebarContext';
 import { useTranslation } from 'react-i18next';
 
-import { Box, Button, Divider, Drawer, Hidden, Link } from '@material-ui/core';
+import { Box, Divider, Drawer, Hidden, Link } from '@material-ui/core';
 import { experimentalStyled } from '@material-ui/core/styles';
 import SidebarMenu from './SidebarMenu';
 
@@ -37,7 +37,7 @@ const SidebarDivider = experimentalStyled(Divider)(
 );
 
 function Sidebar() {
-  const { t }: { t: any } = useTranslation();
+  // const { t }: { t: any } = useTranslation();
   const { sidebarToggle, toggleSidebar } = useContext(SidebarContext);
   const closeSidebar = () => toggleSidebar();
 

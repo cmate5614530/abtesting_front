@@ -4,14 +4,6 @@ import Footer from 'src/components/Footer';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 
 import AudienceOverview from './AudienceOverview';
-import Conversions from './Conversions';
-import TopLandingPages from './TopLandingPages';
-import ActiveReferrals from './ActiveReferrals';
-import PendingInvitations from './PendingInvitations';
-import BounceRate from './BounceRate';
-import ConversionsAlt from './ConversionsAlt';
-import SessionsByCountry from './SessionsByCountry';
-import TrafficSources from './TrafficSources';
 import { Container, Grid } from '@material-ui/core';
 
 import GrossSales from './GrossSales';

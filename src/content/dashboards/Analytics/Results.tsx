@@ -11,7 +11,6 @@ import {
 import PropTypes from 'prop-types';
 import {
   Avatar,
-  Autocomplete,
   Box,
   Card,
   Checkbox,
@@ -20,8 +19,6 @@ import {
   Divider,
   Tooltip,
   IconButton,
-  InputAdornment,
-  MenuItem,
   Link,
   AvatarGroup,
   Table,
@@ -31,16 +28,11 @@ import {
   TablePagination,
   TableContainer,
   TableRow,
-  ToggleButton,
-  ToggleButtonGroup,
   LinearProgress,
   TextField,
   Button,
   Typography,
   Dialog,
-  FormControl,
-  Select,
-  InputLabel,
   Zoom,
   CardMedia,
   lighten,
@@ -52,12 +44,8 @@ import type { Project, ProjectStatus } from 'src/models/project';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { experimentalStyled } from '@material-ui/core/styles';
-import LaunchTwoToneIcon from '@material-ui/icons/LaunchTwoTone';
 import Label from 'src/components/Label';
 import BulkActions from './BulkActions';
-import SearchTwoToneIcon from '@material-ui/icons/SearchTwoTone';
-import GridViewTwoToneIcon from '@material-ui/icons/GridViewTwoTone';
-import TableRowsTwoToneIcon from '@material-ui/icons/TableRowsTwoTone';
 import DeleteTwoToneIcon from '@material-ui/icons/DeleteTwoTone';
 import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
 import { useSnackbar } from 'notistack';
@@ -517,7 +505,7 @@ const Results: FC<ResultsProps> = ({ projects, ...rest }) => {
                           </TableCell> */}
                           <TableCell>
                             <Typography noWrap variant="h5">
-                              <Link href="#">{project.domain}</Link>
+                              <Link href={'/domain/details/'+project._id}>{project.href}</Link>
                             </Typography>
                           </TableCell>
                           
