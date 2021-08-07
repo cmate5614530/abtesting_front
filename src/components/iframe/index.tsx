@@ -164,6 +164,7 @@ export const IFrame = ({ url, onClose, makeWinner, domain, variantId }) => {
                 setSaving(false);
                 onClose();
             } else {
+                console.log('I was clicked on new version function');
                 saveOriginalOne()
             }
         } catch (error) {

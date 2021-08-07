@@ -1,6 +1,7 @@
-import { Button, CircularProgress, Container, Grid, Typography } from '@material-ui/core';
+import { Button, CircularProgress, Container, Grid, Link, Typography } from '@material-ui/core';
 import { format } from 'date-fns';
 import { useState, useEffect } from 'react';
+import { Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Provider, useDispatch } from 'react-redux';
 import { useParams } from 'react-router';
@@ -17,6 +18,8 @@ import ActiveReferrals from '../dashboards/Analytics/ActiveReferrals';
 import BounceRate from '../dashboards/Analytics/BounceRate';
 import ConversionsAlt from '../dashboards/Analytics/ConversionsAlt';
 import PendingInvitations from '../dashboards/Analytics/PendingInvitations';
+import { VariantsComponent } from './variants/variants.components';
+let removedWinnerTemplates = [];
 function Report(){
     const domain = useAppSelector(store => store.domain);
     const dispatch = useDispatch();
@@ -24,13 +27,16 @@ function Report(){
     const [loading, setLoading] = useState(true);
     const {userExperiments, experiment, isNewExperiment, newTemplates} = useAppSelector(store => store.experiment);
     const { t }: { t: any } = useTranslation();
-    const [templates, setTemplates] = useState([]);
     const [ iframeOpened, setIframeOpened ] = useState(false);
+    
+    const [showConfirmWinner, setConfirmationIfWinner] = useState(false);
+
     const onClose = () => {
+        setIframeOpened(false);
         fetch();
     }
     const fetch = () => {
-        dispatch(viewDomainAction(params.testid));
+        dispatch(viewDomainAction(params.id));
     }
 
     const fetchAndLoadExperiments = (domainId) => {
@@ -48,11 +54,20 @@ function Report(){
        
     }
 
-    const getExp = async (id)=>{
-        let ex = await experimentService.getById(id);
-        console.log('----experiement by id----', ex);
-        setTemplates(ex.data.data.templates);
+    const fetchExperiment = async (e) => {
+        try {
+            setLoading(true);
+            dispatch(fetchExperimentById(e));
+        } catch (error) {
+            
+        } finally {
+            setLoading(false);
+        }
     }
+
+    const experimentTemplates  = experiment?.templates || [];
+    const newTemplatesToSave = newTemplates || [];
+    const templatesToDisplay = [...experimentTemplates, ...newTemplatesToSave]
 
     const createExperiment = () => {
         dispatch(createNewExperiment());
@@ -62,21 +77,24 @@ function Report(){
     useEffect(()=>{
         fetch();
         console.log('==params==', params);
-        getExp(params.expid);
-        if(domain._id) fetchAndLoadExperiments(domain?._id);
-        console.log(experiment);
-        if(userExperiments.length > 0) {
-            const latestExperiment = userExperiments && userExperiments[userExperiments.length - 1];
-            const activeExperiment = userExperiments && userExperiments.filter(exp => exp.isActive);
-            console.log('User ', userExperiments);
-            console.log('Active', activeExperiment);
-            console.log('Latest', latestExperiment);
+        fetchExperiment(params.expid);
+      
+        // show acivated experiment first by default
+        // if(domain._id) fetchAndLoadExperiments(domain?._id);
+        // console.log(experiment);
+        // if(userExperiments.length > 0) {
+        //     const latestExperiment = userExperiments && userExperiments[userExperiments.length - 1];
+        //     const activeExperiment = userExperiments && userExperiments.filter(exp => exp.isActive);
+        //     console.log('User ', userExperiments);
+        //     console.log('Active', activeExperiment);
+        //     console.log('Latest', latestExperiment);
   
-            const loadExperiment = activeExperiment.length > 0 ? activeExperiment[0] : latestExperiment
+        //     const loadExperiment = activeExperiment.length > 0 ? activeExperiment[0] : latestExperiment
   
-            dispatch(fetchExperimentById(loadExperiment._id));
+        //     dispatch(fetchExperimentById(loadExperiment._id));
             
-        }
+        // }
+        // show activated experiment first by default
     }, [domain._id, userExperiments.length])
 
     return (
@@ -85,7 +103,7 @@ function Report(){
             <Grid container alignItems="center">
                 <Grid item>
                     <Typography variant="h1" component="h1" gutterBottom>
-                        {domain.href} {' Versions'}
+                        {domain.href} {experiment?.name} {(experiment && experiment.isActive) ? '(Active)' : ''}
                         <Button 
                             variant="contained" 
                             style={{marginLeft:'30px'}}
@@ -112,38 +130,8 @@ function Report(){
             spacing={3}
             >
             
-                {   (!iframeOpened && templates) &&
-                    templates.map((item, index)=> {
-                        return (
-                        <Grid item xs={12} md={6} key={index}>
-                            <Typography variant="h1" component="h1" gutterBottom>
-                                     {(!item.isOriginal) ? 'Variation #'+(index+1) : 'Original'}
-                            </Typography>
-                            <img src={`${Config.BACKEND}/${item.jpeg_path}`} width="100%"></img>
-                            {/* <iframe src={domain.href} id="url-scrapped" className="w-100" style={{border:'none !important',borderRadius:'5px', width:'100%', height:'300px'}}></iframe> */}
-                            <Grid
-                            container
-                            spacing={3}
-                            direction="row"
-                            justifyContent="center"
-                            alignItems="stretch"
-                            >
-                                <Grid item sm={6} xs={12}>
-                                    <ActiveReferrals />
-                                </Grid>
-                                <Grid item sm={6} xs={12}>
-                                    <PendingInvitations />
-                                </Grid>
-                                <Grid item sm={6} xs={12}>
-                                    <BounceRate />
-                                </Grid>
-                                <Grid item sm={6} xs={12}>
-                                    <ConversionsAlt />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        )
-                    })    
+                {   (!iframeOpened && templatesToDisplay) &&
+                <VariantsComponent experiment={experiment} templates={templatesToDisplay} refreshData={fetch}/>                   
                 }
 
             

@@ -90,7 +90,7 @@ const routes: Routes = [
     exact: true,
     guard: Authenticated,
     layout: SidebarLayout,
-    path: '/domain/details/:testid/:expid',
+    path: '/domain/details/:id/:expid',
     component: ReportPage
   },
   {

@@ -11,7 +11,7 @@ const Guest: FC<GuestProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <Redirect to="/preview/dashboards/analytics" />;
+    return <Redirect to="/dashboard/analytics" />;
   }
 
   return <>{children}</>;

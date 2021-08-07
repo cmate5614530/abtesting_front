@@ -34,14 +34,14 @@ const CardContentWrapper = experimentalStyled(CardContent)(
 `
 );
 
-function ConversionsAlt() {
+function ConversionsAlt({value}) {
   const { t }: { t: any } = useTranslation();
 
   return (
     <Card>
       <CardContentWrapper>
         <Typography variant="overline" color="text.primary">
-          {t('Conversion')}
+          {t('Conversion rate')}
         </Typography>
 
         <ListItem disableGutters sx={{ my: 1 }} component="div">
@@ -52,7 +52,7 @@ function ConversionsAlt() {
           </ListItemAvatar>
 
           <ListItemText
-            primary="55.2%"
+            primary={value+'%'}
             primaryTypographyProps={{
               variant: 'h1',
               sx: { ml: 2 },
@@ -60,7 +60,7 @@ function ConversionsAlt() {
             }}
           />
         </ListItem>
-        <ListItem disableGutters sx={{ mt: 0.5, mb: 1.5 }} component="div">
+        {/* <ListItem disableGutters sx={{ mt: 0.5, mb: 1.5 }} component="div">
           <ListItemText
             primary={
               <>
@@ -72,7 +72,7 @@ function ConversionsAlt() {
             }
             primaryTypographyProps={{ variant: 'body2', noWrap: true }}
           />
-        </ListItem>
+        </ListItem> */}
       </CardContentWrapper>
     </Card>
   );

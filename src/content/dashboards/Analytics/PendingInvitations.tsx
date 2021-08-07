@@ -34,14 +34,14 @@ const CardContentWrapper = experimentalStyled(CardContent)(
 `
 );
 
-function PendingInvitations() {
+function PendingInvitations({value}) {
   const { t }: { t: any } = useTranslation();
 
   return (
     <Card>
       <CardContentWrapper>
         <Typography variant="overline" color="text.primary">
-          {t('Pending Invitations')}
+          {t('Successful Conversions')}
         </Typography>
 
         <ListItem disableGutters sx={{ my: 1 }} component="div">
@@ -52,7 +52,7 @@ function PendingInvitations() {
           </ListItemAvatar>
 
           <ListItemText
-            primary="19"
+            primary={value}
             primaryTypographyProps={{
               variant: 'h1',
               sx: { ml: 2 },
@@ -60,7 +60,7 @@ function PendingInvitations() {
             }}
           />
         </ListItem>
-        <ListItem disableGutters sx={{ mt: 0.5, mb: 1.5 }} component="div">
+        {/* <ListItem disableGutters sx={{ mt: 0.5, mb: 1.5 }} component="div">
           <ListItemText
             primary={
               <>
@@ -72,7 +72,7 @@ function PendingInvitations() {
             }
             primaryTypographyProps={{ variant: 'body2', noWrap: true }}
           />
-        </ListItem>
+        </ListItem> */}
       </CardContentWrapper>
     </Card>
   );

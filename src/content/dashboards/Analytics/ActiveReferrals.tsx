@@ -34,14 +34,14 @@ const CardContentWrapper = experimentalStyled(CardContent)(
 `
 );
 
-function ActiveReferrals() {
+function ActiveReferrals({value}) {
   const { t }: { t: any } = useTranslation();
 
   return (
     <Card>
       <CardContentWrapper>
         <Typography variant="overline" color="text.primary">
-          {t('Active Referrals')}
+          {t('UNIQUE VISITORS')}
         </Typography>
 
         <ListItem disableGutters sx={{ my: 1 }} component="div">
@@ -52,7 +52,7 @@ function ActiveReferrals() {
           </ListItemAvatar>
 
           <ListItemText
-            primary="275"
+            primary={value}
             primaryTypographyProps={{
               variant: 'h1',
               sx: { ml: 2 },
@@ -60,7 +60,7 @@ function ActiveReferrals() {
             }}
           />
         </ListItem>
-        <ListItem disableGutters sx={{ mt: 0.5, mb: 1.5 }} component="div">
+        {/* <ListItem disableGutters sx={{ mt: 0.5, mb: 1.5 }} component="div">
           <ListItemText
             primary={
               <>
@@ -72,7 +72,7 @@ function ActiveReferrals() {
             }
             primaryTypographyProps={{ variant: 'body2', noWrap: true }}
           />
-        </ListItem>
+        </ListItem> */}
       </CardContentWrapper>
     </Card>
   );
