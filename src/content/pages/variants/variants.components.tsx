@@ -26,6 +26,7 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteTwoToneIcon from '@material-ui/icons/DeleteTwoTone';
+import { isActionable, isChangeAble, mutateAIResponse } from 'src/helpers';
 import { AnyObject } from 'yup/lib/object';
 let removedWinnerTemplates = [];
 
@@ -274,10 +275,15 @@ export const VariantsComponent = (props) => {
         setTemplates(templates.filter(t=>t._id !== id));
     }
 
+    const createExperiment = () => {
+        dispatch(createNewExperiment());
+        //setIframeOpened(true);
+    }
+
     useEffect(() => {
         setTemplates(props.templates);
         const ids = experiment?.templates && experiment?.templates.reduce((_store, current) => {
-            console.log(current);
+            // console.log(current);
             if (current.isActive) _store.push(current._id);
             return _store;
         }, []);
@@ -294,14 +300,14 @@ export const VariantsComponent = (props) => {
         <>
     
             
-            <Grid item xs={12} md={4}>
+           <Grid item xs={12} md={4}>
                 <Button 
                     variant="contained" 
                     style={{marginLeft:'30px'}}
                     color="primary" 
                     onClick={toggleConversionModal}
                 >
-                    {'URL Conversion'}
+                    {'Set Conversion Item'}
                 </Button>
             </Grid>
             <Grid item xs={12} md={4} style={{display:'flex', alignItems:'center'}}>
@@ -316,37 +322,6 @@ export const VariantsComponent = (props) => {
                 </Grid>
                 <Grid item>Action able</Grid>
             </Grid>
-            <Grid item xs={12} md={4}>    
-                <Button 
-                    variant="contained" 
-                    style={{marginLeft:'30px'}}
-                    color="secondary" 
-                    onClick={toggleScript}
-                >
-                    {'How to Use it?'}
-                </Button>
-            </Grid>
-            {/* <Grid item xs={12} md={4}>
-                <Button 
-                    variant="contained" 
-                    style={{marginLeft:'30px'}}
-                    color="secondary" 
-                    onClick={toggleDeleteModal}
-                >
-                    {'Delete Webpage'}
-                </Button>
-            </Grid> */}
-            <Grid item xs={12} md={4}>
-                <Button 
-                    variant="contained" 
-                    style={{marginLeft:'30px'}}
-                    color="primary" 
-                    onClick={makeLive}
-                    disabled={saving}
-                >
-                    { saving ? 'Saving...' : 'Make Live' }
-                </Button>
-            </Grid>
             <Grid item xs={12} md={4}>
                 <Button 
                     variant="contained" 
@@ -358,7 +333,7 @@ export const VariantsComponent = (props) => {
                     { saving ? 'Saving...' : 'Reset Experiments' }
                 </Button>
             </Grid>
-            <Grid item xs={12} md={4}></Grid>
+            
         {
              domain && (isConversion ? activatedAndReadyVariants() : activatedAndReadyAndWinnerVariants()).map((item, index)=> {
                 return (
@@ -377,24 +352,27 @@ export const VariantsComponent = (props) => {
                         </Tooltip>
                     </Typography>
                     <Link href={`http://${domain.domain}?ekkelai_ab_test_id=${item._id}`} target='_blank' style={{float:'right'}}>{t('See Live')}</Link>
-                    
-                    {/* <Typography noWrap>
-                        <Tooltip title={'Delete'} arrow>
-                            <IconButton
-                            onClick={()=>deleteThis(item._id)}
-                            color="primary"
-                            >
-                            <DeleteTwoToneIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </Typography> */}
+                
                 
                     <Form.Group>
                             <Form.Check readOnly type="checkbox" className="activeCheckBox" checked={item.isActive} onClick={()=>changeTemplateStatus(item)}/>
                     </Form.Group>
-                    <img src={`${Config.BACKEND}/${item.jpeg_path}`} width="100%"></img>
-                    <p>{item.change.value}</p>
-                    {/* <iframe src={domain.href} id="url-scrapped" className="w-100" style={{border:'none !important',borderRadius:'5px', width:'100%', height:'300px'}}></iframe> */}
+                    {
+                        item.jpeg_path && <img src={`${Config.BACKEND}/${item.jpeg_path}`} style={{maxWidth:'100%'}}/>
+                    }
+                    <p>{
+                        (isChangeAble(item.tagType)) ? 
+                        item?.change?.value 
+                        :(isActionable(item.tagType)) ? 
+                            <>
+                                <b>XPath: </b>{item.xpath}<br/>
+                                <b>Title: </b>{item.originalText}<br/>
+                                <b>Type: </b>{item.tagType.toUpperCase()}
+                            </>
+                            : ''
+                    
+                    }</p>
+                    
                     <Grid
                     container
                     spacing={3}
@@ -441,25 +419,6 @@ export const VariantsComponent = (props) => {
         
         
         <Dialog
-        open={showScript}
-        maxWidth="sm"
-        fullWidth
-        keepMounted
-        onClose={toggleScript}
-        aria-labelledby="customized-dialog-title"
-        >
-            <DialogTitle id="customized-dialog-title" onClose={toggleScript}>
-                { 'How to use?'}
-            </DialogTitle>
-            <DialogContent dividers>
-                <DialogContentText id="alert-dialog-description">
-                    Copy and Paste this script in your html head tag:<br></br>
-                    {Config.JS_SCRIPT}
-                </DialogContentText>
-            </DialogContent>
-        </Dialog>
-        
-        <Dialog
         open={showConversionModal}
         maxWidth="sm"
         fullWidth
@@ -468,21 +427,21 @@ export const VariantsComponent = (props) => {
         aria-labelledby="customized-dialog-title1"
         >
             <DialogTitle id="customized-dialog-title1" onClose={toggleConversionModal}>
-                { 'Enter URL for Conversion'}
-            </DialogTitle>
-            <DialogContent dividers>
                 
+            </DialogTitle>
+            <DialogContent >
+                <h1 style={{textAlign:'center'}}>{ 'Choose Your Conversion Event'}</h1>    
                 <TextField
                     error={Boolean(error)}
                     helperText={error}
-                    label={'Input URL'}
+                    label={'Conversion URL'}
                     placeholder={'e.g. https://google.com'}
                     value={conversionURL}
                     onChange={e=>{setConversionURL(e.target.value);setError('');}}
                     fullWidth
                     variant="outlined"
                 />
-                <Button 
+                {/* <Button 
                     color="primary" 
                     variant="contained" 
                     style={{ marginTop:'10px', marginBottom:'10px', float:'right'}} 
@@ -491,6 +450,19 @@ export const VariantsComponent = (props) => {
                     disabled={saving}
                 >
                     Save URL
+                </Button> */}
+                <h1 style={{textAlign:'center'}}>{ '-OR-'}</h1> 
+                <Button 
+                    color="primary" 
+                    variant="contained" 
+                    style={{ marginBottom:'25px'}} 
+                    fullWidth
+                    size="large"
+                    onClick={props.createExperiment}
+                    startIcon={saving ? <CircularProgress size="1rem" /> : null}
+                    disabled={saving}
+                >
+                    Choose From Web page
                 </Button>
             </DialogContent>
         </Dialog>

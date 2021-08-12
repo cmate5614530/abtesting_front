@@ -9,6 +9,7 @@ import Guest from 'src/components/Guest';
 import Authenticated from 'src/components/Authenticated';
 
 import DomainDetailsPage from 'src/content/pages/DomainDetails';
+import DocumentPage from 'src/content/pages/Document';
 import NewTest from 'src/content/pages/NewTest';
 import ReportPage from 'src/content/pages/report';
 type Routes = {
@@ -71,6 +72,13 @@ const routes: Routes = [
     exact: true,
     path: '/',
     component: () => <Redirect to="/dashboard/analytics" />
+  },
+  {
+    exact:true,
+    path:'/document',
+    guard:Authenticated,
+    layout:SidebarLayout,
+    component: DocumentPage
   },
   {
     exact: true,

@@ -11,31 +11,18 @@ import {Config} from 'src/environment'
 import { store } from 'src/store';
 import { viewDomainAction } from 'src/store/action';
 import { useAppSelector } from 'src/store/hooks';
-function NewTestContent(){
-    const domain = useAppSelector(store => store.domain);
-    const dispatch = useDispatch();
-    const params:any = useParams();
-    const onClose = () => {
-        fetch();
-    }
-    const fetch = () => {
-        dispatch(viewDomainAction(params.id));
-    }
-    useEffect(()=>{
-        fetch();
-    }, [domain._id])
+import { AnyObject } from 'yup/lib/types';
+function DocumentContent(){
+
     return (
     <ContentWrapper title="New Testing">
         <PageTitleWrapper>
             <Grid container alignItems="center">
                 <Grid item>
                     <Typography variant="h1" component="h1" gutterBottom>
-                    {domain.href}
+                    {'How to use?'}
                     </Typography>
-                    <Typography variant="subtitle2">
-                    {'These are your analytics stats for today, '}
-                    <b>{format(new Date(), 'MMMM dd yyyy')}</b>
-                    </Typography>
+                    
                 </Grid>
             </Grid>
         </PageTitleWrapper>
@@ -48,10 +35,9 @@ function NewTestContent(){
             spacing={3}
             >
                 <Grid item xs={12} >
-                    <div className="col-md-12 iframe">
-                        {/* <IFrame url={`${Config.BACKEND}/${domain.directory}`} onClose={onClose} makeWinner={false} domain={domain} variantId=''/> */}
-                        {/* <IFrame url={`http://${domain.domain}`} onClose={onClose}/> */}
-                    </div>
+                    Copy and Paste this script in your html head tag:<br></br>
+                    {/* {Config.JS_SCRIPT} */}
+                    {'<script src="http://108.61.158.67/:3006/api/v1/domain/kevin-stevens.js"></script>'}
                 </Grid>
             </Grid>
         </Container>
@@ -59,12 +45,11 @@ function NewTestContent(){
     </ContentWrapper>
     )
 }
-
-function NewTest() {
+function Document() {
     return (
         <Provider store={store}>
-            <NewTestContent/>
+            <DocumentContent/>
         </Provider>
     )
 } 
-export default NewTest;
+export default Document;

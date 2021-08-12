@@ -40,31 +40,13 @@ const menuItems: MenuItems[] = [
         icon: HealthAndSafetyTwoToneIcon,
         link: '/submenu',
         items: [
-          {
-            name:'Create a new test',
-            link:'/'
-          },
+          
           {
             name: 'All Previous Test',
             badge: '',
-            link: '/preview/dashboards/analytics'
+            link: '/dashboard/analytics'
           },
-          {
-            name: 'Reports',
-            link: '/'
-          },
-          {
-            name: 'Sites',
-            link: '/'
-          },
-          {
-            name: 'Add A Site',
-            link: '/'
-          },
-          {
-            name: 'Add A URL for New Test',
-            link: '/'
-          }
+          
         ]
       }
     ]
@@ -102,6 +84,11 @@ const menuItems: MenuItems[] = [
           }
         ]
       },
+      {
+        name:'Integration',
+        icon: AnalyticsTwoToneIcon,
+        link:'/document'
+      }
     ]
   }
 ];

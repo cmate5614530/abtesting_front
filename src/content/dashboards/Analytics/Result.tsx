@@ -1,29 +1,20 @@
 import {
-  FC,
   ChangeEvent,
-  MouseEvent,
   useState,
   ReactElement,
   Ref,
   forwardRef,
   useEffect
 } from 'react';
-import PropTypes from 'prop-types';
 import {
   Avatar,
-  Autocomplete,
   Box,
   Card,
-  Checkbox,
-  Grid,
   Slide,
   Divider,
   Tooltip,
   IconButton,
-  InputAdornment,
-  MenuItem,
   Link,
-  AvatarGroup,
   Table,
   TableBody,
   TableCell,
@@ -31,47 +22,31 @@ import {
   TablePagination,
   TableContainer,
   TableRow,
-  ToggleButton,
-  ToggleButtonGroup,
   LinearProgress,
-  TextField,
   Button,
   Typography,
   Dialog,
-  FormControl,
-  Select,
-  InputLabel,
   Zoom,
-  CardMedia,
-  lighten,
   CircularProgress
 } from '@material-ui/core';
 import { TransitionProps } from '@material-ui/core/transitions';
 import CloseIcon from '@material-ui/icons/Close';
 import type { Project, ProjectStatus } from 'src/models/project';
 import { useTranslation } from 'react-i18next';
-import clsx from 'clsx';
 import { experimentalStyled } from '@material-ui/core/styles';
-import LaunchTwoToneIcon from '@material-ui/icons/LaunchTwoTone';
 import Label from 'src/components/Label';
-import BulkActions from './BulkActions';
-import SearchTwoToneIcon from '@material-ui/icons/SearchTwoTone';
-import GridViewTwoToneIcon from '@material-ui/icons/GridViewTwoTone';
-import TableRowsTwoToneIcon from '@material-ui/icons/TableRowsTwoTone';
 import DeleteTwoToneIcon from '@material-ui/icons/DeleteTwoTone';
 import EditTwoToneIcon from '@material-ui/icons/EditTwoTone';
 import { useSnackbar } from 'notistack';
-import { formatDistance, format } from 'date-fns';
-import Text from 'src/components/Text';
 
 import { domainService, experimentService } from 'src/services';
 import { IFrame } from 'src/components/iframe';
 import { Config } from 'src/environment';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { store } from 'src/store';
 import { useAppSelector } from 'src/store/hooks';
 import { AnyObject } from 'yup/lib/object';
-import { useLocation, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { createNewExperiment, createNewExperimentSuccess, fetchExperimentById, fetchExperiments, viewDomainAction } from 'src/store/action';
 import AudienceOverview from './AudienceOverview';
 const DialogWrapper = experimentalStyled(Dialog)(
@@ -199,6 +174,8 @@ function ResultContent(){
   const [ iframeOpened, setIframeOpened ] = useState(false);
   const params:AnyObject = useParams();
   const location = useLocation();
+  const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
@@ -252,8 +229,12 @@ function ResultContent(){
           
       }
 
+      if(!iframeOpened && domain && isNewExperiment){
+        console.log('==========here is line 257')
+        saveExperiment();
+      }
 
-  }, [domain._id,userExperiments.length])
+  }, [domain._id,userExperiments.length, isNewExperiment, iframeOpened])
 
   
 
@@ -307,7 +288,7 @@ function ResultContent(){
     })
     
   };
-  const saveExperiment = async () => {
+  const saveExperiment =  () => {
       try {
           console.log('Started');
           setLoading(true);
@@ -315,21 +296,57 @@ function ResultContent(){
           const length = userExperiments?.length;
           const name = length > 0 ?  `Experiment ${length + 1}` : `Experiment 1`;
           if(templates.length !== 0){
-          const result = await experimentService.create({domain,templates,name});
-          console.log(result);
-          if(result.data?.data?.success === false) {
-              console.log(result);
-              // toast.error(result.data?.data?.message);
-          } else {
-              // toast.success('Experiment Created Successfully');
-              fetchAndLoadExperiments(domain._id);
-          }
+            experimentService.create({domain,templates,name}).then((result) => {
+              //console.log(result);
+              if(result.data?.data?.success === false) {
+                  //console.log(result);
+                  // toast.error(result.data?.data?.message);
+                  enqueueSnackbar(result.data?.data?.message, {
+                    variant: 'error',
+                    anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'right'
+                    },
+                    TransitionComponent: Zoom
+                  });
+              } else {
+                  // toast.success('Experiment Created Successfully');
+                  enqueueSnackbar('Experiment Created Successfully', {
+                    variant: 'success',
+                    anchorOrigin: {
+                    vertical: 'top',
+                    horizontal: 'right'
+                    },
+                    TransitionComponent: Zoom
+                  });
+                  console.log('---result  --', result);
+                  //fetchAndLoadExperiments(domain._id);
+                  history.push('/domain/details/'+domain._id+'/'+result.data.data._id);
+              }
+            });
+        
           } else {
               // toast.error('Please Select templates to save');
+              enqueueSnackbar('Please Select templates to save', {
+                  variant: 'error',
+                  anchorOrigin: {
+                  vertical: 'top',  
+                  horizontal: 'right'
+                  },
+                  TransitionComponent: Zoom
+              });
           }
           
       } catch (error) {
           // toast.error(error);
+          enqueueSnackbar(error, {
+            variant: 'error',
+            anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right'
+            },
+            TransitionComponent: Zoom
+          });
       } finally {
           setLoading(false);
           dispatch(createNewExperimentSuccess());
@@ -362,7 +379,7 @@ function ResultContent(){
               </Button>
               }
               
-                {isNewExperiment &&
+                {/* {isNewExperiment &&
                 <Button 
                   variant="contained" 
                   style={{marginLeft:'30px'}}
@@ -373,6 +390,17 @@ function ResultContent(){
                     {'Save Test'}
                 </Button>
                 }
+                {isNewExperiment &&
+                <Button 
+                  variant="contained" 
+                  style={{marginLeft:'30px'}}
+                  color="primary" 
+                  onClick={()=> setIframeOpened(true)}
+                  startIcon={loading ? <CircularProgress size="1rem" /> : null}
+                  disabled={loading}>
+                    {'Fetch More Elements'}
+                </Button>
+                } */}
         </Typography>        
           <Card>
               <Box
@@ -595,7 +623,4 @@ function Result() {
   )
 } 
 export default Result;
-function enqueueSnackbar(arg0: any, arg1: { variant: string; anchorOrigin: { vertical: string; horizontal: string; }; TransitionComponent: (props: import("@material-ui/core").ZoomProps) => JSX.Element; }) {
-  throw new Error('Function not implemented.');
-}
 
