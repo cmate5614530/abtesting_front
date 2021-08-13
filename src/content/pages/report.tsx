@@ -140,124 +140,6 @@ function Report(){
         }
     }
 
-    const makeLive = async () => {
-        try {
-            setSaving(true)
-            await experimentService.makeExperimentActive(experiment._id);
-            const ids = templates.reduce((_store, current) => {
-                if (current.isActive) _store.push(current._id);
-                return _store;
-            }, []);
-            
-            await domainService.changeVariantStatus(domain._id, ids);
-            await domainService.removeWinnerToOnlyActiveTemplates(domain._id, removedWinnerTemplates);
-            removedWinnerTemplates = [];
-            const { length } = ids;
-            fetch();
-            if(domain._id)  dispatch(fetchExperiments(domain._id)); 
-            dispatch(fetchExperimentById(experiment._id));
-            // toast.success(length > 0 ? `${ length === 1 ? '1 Variant is' : `${length} Variants are`} live now.` : 'No variant is applied.')
-            enqueueSnackbar(length > 0 ? `${ length === 1 ? '1 Variant is' : `${length} Variants are`} live now.` : 'No variant is applied.', {
-                variant: 'success',
-                anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right'
-                },
-                TransitionComponent: Zoom
-            });
-        } catch (error) {
-            // toast.error('Some error occurred!')
-            enqueueSnackbar(t('Some errors occurred!'), {
-                variant: 'error',
-                anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right'
-                },
-                TransitionComponent: Zoom
-            });
-        }
-        setSaving(false)
-    }
-    
-    const getPrevActiveTemplateIds = () => {
-        return templates.reduce((_store,current) => {
-            if(!current.isActive && current.prevActive) _store.push(current._id);
-            return _store;
-        },[]);
-    }
-
-    const getActiveTemplateIds = () => {
-        return templates.reduce((_store,current) => {
-            if(current.isActive) _store.push(current._id);
-            return _store;
-        },[]);
-    }
-
-    const pauseConversion = async () => {
-        try {
-            console.log('Is Running' , isRunning);
-            if(isRunning){
-                setIsRunning(false);
-                const ids = getActiveTemplateIds();
-                await domainService.pauseVariants(domain._id, ids);
-                // toast.success(ids.length > 0 ? `Variants Paused` : 'No variant is applied.')
-                enqueueSnackbar(ids.length > 0 ? `Variants Paused` : 'No variant is applied.', {
-                    variant: 'success',
-                    anchorOrigin: {
-                    vertical: 'top',
-                    horizontal: 'right'
-                    },
-                    TransitionComponent: Zoom
-                });
-            } else {
-                setIsRunning(true)
-                const ids = getPrevActiveTemplateIds();
-                await domainService.resumeVariants(domain._id, ids);
-                // toast.success(ids.length > 0 ? `Variants Resumed` : 'No previous variant is applied.')
-                enqueueSnackbar(ids.length > 0 ? `Variants Resumed` : 'No previous variant is applied.', {
-                    variant: 'success',
-                    anchorOrigin: {
-                    vertical: 'top',
-                    horizontal: 'right'
-                    },
-                    TransitionComponent: Zoom
-                });
-            }
-            fetch();
-            if(domain._id)  dispatch(fetchExperiments(domain._id)); 
-            dispatch(fetchExperimentById(experiment._id));
-        } catch (error) {
-            // toast.error('Some error occurred!')
-            enqueueSnackbar(t('Some errors occurred!'), {
-                variant: 'error',
-                anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right'
-                },
-                TransitionComponent: Zoom
-            });
-        }
-    }
-
-    const changeTemplateStatus = (template) => {
-        const isAlreadyWinner = domain.templates.some(t => t.xpath === template.xpath && t.isWinner);
-        if(isAlreadyWinner && !template.isActive) toggleConfirmWinner();
-        else _confirmChangeStatus(template);
-    }
-
-    const toggleConfirmWinner = () => setConfirmationIfWinner(!showConfirmWinner);
-
-    const _confirmChangeStatus = (template) => changeStatus(template._id, !template.isActive);
-
-    const changeStatus = async (id, isActive, removeWinner = false) => {
-
-        const mappedTemplates = templates.map(t => t._id !== id ? t : { ...t, isActive });
-        setTemplates([...mappedTemplates]);
-
-        // Remove Winner for Re test
-        if (removeWinner && isActive) removedWinnerTemplates.push(id)
-        else removedWinnerTemplates = removedWinnerTemplates.filter( _id => _id !== id )
-    }
 
     useEffect(()=>{
         setTemplates(templatesToDisplay);
@@ -278,22 +160,6 @@ function Report(){
         } else {
             setIsRunning(false);
         }
-        // show acivated experiment first by default
-        // if(domain._id) fetchAndLoadExperiments(domain?._id);
-        // console.log(experiment);
-        // if(userExperiments.length > 0) {
-        //     const latestExperiment = userExperiments && userExperiments[userExperiments.length - 1];
-        //     const activeExperiment = userExperiments && userExperiments.filter(exp => exp.isActive);
-        //     console.log('User ', userExperiments);
-        //     console.log('Active', activeExperiment);
-        //     console.log('Latest', latestExperiment);
-  
-        //     const loadExperiment = activeExperiment.length > 0 ? activeExperiment[0] : latestExperiment
-  
-        //     dispatch(fetchExperimentById(loadExperiment._id));
-            
-        // }
-        // show activated experiment first by default
 
         if(!iframeOpened && domain && isNewExperiment){
             console.log('==========here is line 257--', domain, isNewExperiment)
@@ -304,65 +170,7 @@ function Report(){
     return (
         <ContentWrapper title="New Testing">
         <PageTitleWrapper>
-            <Grid container alignItems="center">
-                <Grid item>
-                    <Typography variant="h1" component="h1" gutterBottom>
-                        {domain.href} {experiment?.name} {(experiment && experiment.isActive) ? '(Active)' : ''}
-                        <Button 
-                            variant="contained" 
-                            style={{marginLeft:'30px'}}
-                            color="primary" 
-                            onClick={createExperiment} 
-                            startIcon={loading ? <CircularProgress size="1rem" /> : null}
-                            disabled={loading}>
-                            {'Add New Version'}
-                        </Button>
-                        {
-                            experiment && !experiment.isActive && <>
-                                <Button 
-                                    variant="contained" 
-                                    style={{marginLeft:'30px'}}
-                                    color="primary" 
-                                    onClick={makeLive}
-                                    disabled={saving}
-                                >
-                                    { saving ? 'Saving...' : 'Make Live' }
-                                </Button>
-                            </>
-                        }
-                        {
-                            experiment && experiment.isActive && isRunning &&<>
-                                <Button 
-                                    variant="contained" 
-                                    style={{marginLeft:'30px'}}
-                                    color="primary" 
-                                    onClick={pauseConversion}
-                                    disabled={saving}
-                                >
-                                    { saving ? 'Saving...' : 'Pause Experiment' }
-                                </Button>
-                            </>
-                        }
-                        {
-                            experiment && experiment.isActive && !isRunning &&<>
-                                <Button 
-                                    variant="contained" 
-                                    style={{marginLeft:'30px'}}
-                                    color="primary" 
-                                    onClick={pauseConversion}
-                                    disabled={saving}
-                                >
-                                    { saving ? 'Saving...' : 'Resume Experiment' }
-                                </Button>
-                            </>
-                        }
-                    </Typography>
-                    <Typography variant="subtitle2">
-                        {'These are your analytics stats for today, '}
-                        <b>{format(new Date(), 'MMMM dd yyyy')}</b>
-                    </Typography>
-                </Grid>
-            </Grid>
+            
         </PageTitleWrapper>
         <Container maxWidth="lg">
             <Grid
@@ -372,7 +180,19 @@ function Report(){
             alignItems="stretch"
             spacing={3}
             >
-            
+                <h1 style={{marginLeft:'30px'}}>{domain.href} {experiment?.name} {(experiment && experiment.isActive) ? '(Active)' : ''}</h1>
+                <Grid item >
+                <Button 
+                    variant="contained" 
+                    style={{marginLeft:'30px'}}
+                    color="primary" 
+                    onClick={createExperiment} 
+                    startIcon={loading ? <CircularProgress size="1rem" /> : null}
+                    disabled={loading}>
+                    {'Add New Version'}
+                </Button>
+                </Grid>
+                
                 {   (!iframeOpened && templatesToDisplay) &&
                 <VariantsComponent experiment={experiment} templates={templatesToDisplay} refreshData={fetch} createExperiment={createExperiment}/>                   
                 }

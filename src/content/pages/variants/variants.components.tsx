@@ -298,7 +298,47 @@ export const VariantsComponent = (props) => {
 
     return (
         <>
-    
+            { experiment && !experiment.isActive && <Grid item>
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={makeLive}
+                        disabled={saving}
+                    >
+                        { saving ? 'Saving...' : 'Make Live' }
+                    </Button>
+                </Grid>
+            }
+            {
+                experiment && experiment.isActive && isRunning && <Grid item>
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={pauseConversion}
+                        disabled={saving}
+                    >
+                        { saving ? 'Saving...' : 'Pause Experiment' }
+                    </Button>
+                </Grid>
+            }
+            {
+                experiment && experiment.isActive && !isRunning &&<Grid item>
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={pauseConversion}
+                        disabled={saving}
+                    >
+                        { saving ? 'Saving...' : 'Resume Experiment' }
+                    </Button>
+                </Grid>
+            }
+            <Grid item xs={12} md={12} style={{paddingTop:'0px'}}>
+                    <Typography variant="subtitle2">
+                        {'These are your analytics stats for today, '}
+                        <b>{format(new Date(), 'MMMM dd yyyy')}</b>
+                    </Typography>
+            </Grid>
             
            <Grid item xs={12} md={4}>
                 <Button 
