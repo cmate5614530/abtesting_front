@@ -170,7 +170,7 @@ function Report(){
     return (
         <ContentWrapper title="New Testing">
         <PageTitleWrapper>
-            
+            <h6 style={{display:'none'}}></h6>
         </PageTitleWrapper>
         <Container maxWidth="lg">
             <Grid

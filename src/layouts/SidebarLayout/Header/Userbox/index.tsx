@@ -127,7 +127,7 @@ function HeaderUserbox() {
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />
         <List sx={{ p: 1 }} component="nav">
-          <ListItem button to="/preview/management/user/1" component={NavLink}>
+          <ListItem button to="/profile" component={NavLink}>
             <AccountBoxTwoToneIcon fontSize="small" />
             <ListItemText primary={t('Profile')} />
           </ListItem>

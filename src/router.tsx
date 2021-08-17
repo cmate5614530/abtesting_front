@@ -12,6 +12,7 @@ import DomainDetailsPage from 'src/content/pages/DomainDetails';
 import DocumentPage from 'src/content/pages/Document';
 import NewTest from 'src/content/pages/NewTest';
 import ReportPage from 'src/content/pages/report';
+import ProfilePage from 'src/content/pages/profile';
 type Routes = {
   exact?: boolean;
   path?: string | string[];
@@ -72,6 +73,13 @@ const routes: Routes = [
     exact: true,
     path: '/',
     component: () => <Redirect to="/dashboard/analytics" />
+  },
+  {
+    exact: true,
+    path:'/profile',
+    guard: Authenticated,
+    layout: SidebarLayout,
+    component: ProfilePage
   },
   {
     exact:true,
